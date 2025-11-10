@@ -6,3 +6,7 @@ on the MNIST data set to be able to detect drawn numbers.
 
 # Dependencies
 sudo apt install libgtkmm-3.0-dev
+
+# License
+
+This software is available under the MIT license.
