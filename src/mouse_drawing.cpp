@@ -2,7 +2,7 @@
 
 MouseDrawing::MouseDrawing()
 {
-    set_size_request(200, 200);
+    set_size_request(300, 300);
 }
 
 MouseDrawing::~MouseDrawing()
@@ -11,7 +11,9 @@ MouseDrawing::~MouseDrawing()
 
 bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-    cr->set_source_rgb(1.0, 1.0, 1.0);
+    cr->set_source_rgb(0.0, 0.0, 0.0);
+
+    cr->paint();
 
     return true;
 }

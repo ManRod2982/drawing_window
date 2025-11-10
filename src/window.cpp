@@ -10,7 +10,7 @@ Window::Window() :
   add(my_grid);
   my_grid.set_column_homogeneous(true);
 
-  my_grid.add(mouse_drawing);
+  my_grid.attach(mouse_drawing, 0, 0, 2, 1);
 
   clear_button.signal_clicked().connect( sigc::mem_fun(*this,
               &Window::on_clear_clicked) );
