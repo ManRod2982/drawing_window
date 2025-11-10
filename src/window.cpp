@@ -1,13 +1,45 @@
-#include <gtkmm.h>
+#include "window.h"
+#include <iostream>
 
-int main(int argc, char *argv[])
+Window::Window() :
+    clear_button("Clear"),
+    predict_button("Predict")
 {
-  auto app =
-    Gtk::Application::create(argc, argv,
-      "org.gtkmm.examples.base");
+  set_title("Window");
+  set_border_width(10);
+  add(my_grid);
+  my_grid.set_column_homogeneous(true);
 
-  Gtk::Window window;
-  window.set_default_size(200, 200);
+  my_grid.add(mouse_drawing);
 
-  return app->run(window);
+  clear_button.signal_clicked().connect( sigc::mem_fun(*this,
+              &Window::on_clear_clicked) );
+
+  my_grid.attach_next_to(clear_button, mouse_drawing, Gtk::POS_BOTTOM, 1, 1);
+
+  predict_button.signal_clicked().connect( sigc::mem_fun(*this,
+              &Window::on_predict_clicked) );
+
+  my_grid.attach_next_to(predict_button, clear_button, Gtk::POS_RIGHT, 1, 1);
+
+
+  show_all_children();
+}
+
+Window::~Window()
+{
+}
+
+void Window::on_clear_clicked()
+{
+    // TODO: Add code to clear drawing area once
+    // drawing area is added
+    std::cout << "Clear clicked!\r\n" << std::endl;
+}
+
+void Window::on_predict_clicked()
+{
+    // TODO: Add code to clear drawing area once
+    // drawing area is added
+    std::cout << "Predict clicked!\r\n" << std::endl;
 }
