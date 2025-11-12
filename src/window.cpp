@@ -32,9 +32,9 @@ Window::~Window()
 
 void Window::on_clear_clicked()
 {
-    // TODO: Add code to clear drawing area once
-    // drawing area is added
-    std::cout << "Clear clicked!\r\n" << std::endl;
+    // Clear screen
+    mouse_drawing.clear_screen();
+    std::cout << "Clear clicked!" << std::endl;
 }
 
 void Window::on_predict_clicked()
