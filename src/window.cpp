@@ -39,7 +39,8 @@ void Window::on_clear_clicked()
 
 void Window::on_predict_clicked()
 {
-    // TODO: Add code to clear drawing area once
-    // drawing area is added
-    std::cout << "Predict clicked!\r\n" << std::endl;
+    // Save screen to file
+    // TODO call NN on file and determine the digit
+    std::cout << "Predict clicked!" << std::endl;
+    mouse_drawing.save_screen();
 }
