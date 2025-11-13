@@ -1,13 +1,18 @@
 #include "mouse_drawing.h"
+#include <gdk/gdkkeysyms.h>
+#include <iostream>
 
 MouseDrawing::MouseDrawing()
 {
-    set_size_request(300, 300);
+    set_size_request(drawing_area_w, drawing_area_h);
     this->surface = Cairo::ImageSurface::create(
         Cairo::Format::FORMAT_ARGB32,
-        300,
-        300
+        drawing_area_w,
+        drawing_area_h
     );
+
+    // Enable the events you wish to receive
+    add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
 }
 
 MouseDrawing::~MouseDrawing()
@@ -17,13 +22,13 @@ MouseDrawing::~MouseDrawing()
 void MouseDrawing::clear_screen()
 {
     this->state = DrawState::clear;
+    points.clear();
     queue_draw();
 }
 
 void MouseDrawing::save_screen()
 {
-    this->state = DrawState::save;
-    queue_draw();
+    this->surface->write_to_png("image");
 }
 
 bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -44,25 +49,21 @@ bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             // Set black background
             cr->set_source_rgb(0.0, 0.0, 0.0);
             cr->paint();
-            this->state = DrawState::draw;
+            this->state = DrawState::wait;
             break;
 
         case DrawState::draw:
-            // Set black background
-            cr->set_source_rgb(0.0, 0.0, 0.0);
-            cr->paint();
-
             // Draw a white circle
             cr->save();
             cr->set_line_width(0);
             cr->set_source_rgb(1.0, 1.0, 1.0);
-            cr->arc(150, 150, 10.0, 0, 2*M_PI);
-            cr->fill();
+            // Draw circles where the mouse has moved
+            for(const auto& point:points)
+            {
+                cr->arc(point.x, point.y, brush_size, 0, 2*M_PI);
+                cr->fill();
+            }
             cr->restore();
-            break;
-        case DrawState::save:
-            this->surface->write_to_png("image");
-            this->state = DrawState::draw;
             break;
         default:
             break;
@@ -74,4 +75,32 @@ bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     t_context->paint();
 
     return true;
+}
+
+bool MouseDrawing::on_button_press_event(GdkEventButton* event) {
+    if (event->button == 1) { // Left mouse button
+        this->state = DrawState::draw;
+        points.push_back({event->x, event->y});
+        std::cout << event->x << " " <<event->y << std::endl;
+        return true; // Event handled
+    }
+    return false;
+}
+
+bool MouseDrawing::on_button_release_event(GdkEventButton* event) {
+    if (event->button == 1) {
+        this->state = DrawState::wait;
+        return true; // Event handled
+    }
+    return false;
+}
+
+bool MouseDrawing::on_motion_notify_event(GdkEventMotion* event) {
+    if (this->state == DrawState::draw) {
+        points.push_back({event->x, event->y});
+        queue_draw(); // Request a redraw
+        std::cout << event->x << " " << event->y << std::endl;
+        return true; // Event handled
+    }
+    return false;
 }
