@@ -1,3 +1,8 @@
+//
+// Copyright (c) Manuel Rodriguez.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+//
+// Definition of a window with a grid containing 2 buttons and a drawing area.
 #pragma once
 
 #include <gtkmm/window.h>
@@ -5,6 +10,10 @@
 #include <gtkmm/grid.h>
 #include "mouse_drawing.h"
 
+// Window used to keep all the widgets
+// it contains a grid widget that houses
+// 2 buttons
+// 1 drawing area
 class Window : public Gtk::Window
 {
 public:

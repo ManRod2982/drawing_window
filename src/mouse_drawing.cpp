@@ -1,7 +1,15 @@
+//
+// Copyright (c) Manuel Rodriguez.
+// Licensed under the MIT license. See LICENSE file in the project root for details.
+//
+// Implementation of MouseDrawing class
 #include "mouse_drawing.h"
 #include <gdk/gdkkeysyms.h>
 #include <iostream>
 
+// MouseDrawing ctor sets the drawing area default width and height
+// a surface to store the drawings and enables the handling of mouse
+// events.
 MouseDrawing::MouseDrawing()
 {
     set_size_request(drawing_area_w, drawing_area_h);
@@ -19,6 +27,9 @@ MouseDrawing::~MouseDrawing()
 {
 }
 
+// Method used to clear the screen, it empties the vector
+// used to store the mouse coordinates after a click and
+// triggers a redraw while chaning the state to "clear"
 void MouseDrawing::clear_screen()
 {
     this->state = DrawState::clear;
@@ -26,11 +37,18 @@ void MouseDrawing::clear_screen()
     queue_draw();
 }
 
+// Saves the current surface to a png file called "image"
 void MouseDrawing::save_screen()
 {
-    this->surface->write_to_png("image");
+    this->surface->write_to_png("image.png");
 }
 
+// Main function where the drawing is handled
+// a state variable is used to decide when to draw and
+// when to clear the screen.
+// GTK provides and empty cairo context on each on_draw call
+// therefore we store the context on a surface and restore the
+// context every time we are called.
 bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     auto allocation = this->get_allocation();
@@ -42,7 +60,7 @@ bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->restore();
     cr->paint();
 
-    // Execute action
+    // Check the state to determine our action
     switch(this->state)
     {
         case DrawState::clear:
@@ -53,7 +71,6 @@ bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             break;
 
         case DrawState::draw:
-            // Draw a white circle
             cr->save();
             cr->set_line_width(0);
             cr->set_source_rgb(1.0, 1.0, 1.0);
@@ -69,7 +86,7 @@ bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             break;
     }
 
-    // Save surface
+    // Save surface so that we can restore the context on the next call
     Cairo::RefPtr<Cairo::Context> t_context = Cairo::Context::create(this->surface);
     t_context->set_source(cr->get_target(), -allocation.get_x(), -allocation.get_y());
     t_context->paint();
@@ -77,6 +94,8 @@ bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     return true;
 }
 
+// Checks for left mouse clicks and starts logging the mouse
+// coordinates on our points vector to be drawn later
 bool MouseDrawing::on_button_press_event(GdkEventButton* event) {
     if (event->button == 1) { // Left mouse button
         this->state = DrawState::draw;
@@ -87,6 +106,7 @@ bool MouseDrawing::on_button_press_event(GdkEventButton* event) {
     return false;
 }
 
+// Checks when the click is released to stop drawing.
 bool MouseDrawing::on_button_release_event(GdkEventButton* event) {
     if (event->button == 1) {
         this->state = DrawState::wait;
@@ -95,6 +115,8 @@ bool MouseDrawing::on_button_release_event(GdkEventButton* event) {
     return false;
 }
 
+// Logs new coordinates as we move with the button pressed down.
+// if movement is detected but the left button was released do nothing.
 bool MouseDrawing::on_motion_notify_event(GdkEventMotion* event) {
     if (this->state == DrawState::draw) {
         points.push_back({event->x, event->y});
