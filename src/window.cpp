@@ -1,9 +1,11 @@
 //
 // Copyright (c) Manuel Rodriguez.
-// Licensed under the MIT license. See LICENSE file in the project root for details.
+// Licensed under the MIT license. See LICENSE file in the project root for
+// details.
 //
 // Window definition, this is where the whole layout is defined
 #include "window.h"
+
 #include <iostream>
 
 // Window implementation with a:
@@ -11,10 +13,7 @@
 // predict_button: used to save the screen to an image and get the NN info
 // Drawing area
 // Everything is enclosed in a Gtk::Grid widget
-Window::Window() :
-    clear_button("Clear"),
-    predict_button("Predict")
-{
+Window::Window() : clear_button("Clear"), predict_button("Predict") {
   set_title("NMIST example");
   set_border_width(10);
 
@@ -26,39 +25,37 @@ Window::Window() :
   my_grid.attach(mouse_drawing, 0, 0, 2, 1);
 
   // Connect the clear_button method
-  clear_button.signal_clicked().connect( sigc::mem_fun(*this,
-              &Window::on_clear_clicked) );
-  // Add clear_button below to the mouse_drawing with a width of 1 and height of 1
+  clear_button.signal_clicked().connect(
+      sigc::mem_fun(*this, &Window::on_clear_clicked));
+  // Add clear_button below to the mouse_drawing with a width of 1 and height of
+  // 1
   my_grid.attach_next_to(clear_button, mouse_drawing, Gtk::POS_BOTTOM, 1, 1);
 
   // Connect the predict button method
-  predict_button.signal_clicked().connect( sigc::mem_fun(*this,
-              &Window::on_predict_clicked) );
-  // Add the predict button next to the clear button with a width of 1 and a height of 1
+  predict_button.signal_clicked().connect(
+      sigc::mem_fun(*this, &Window::on_predict_clicked));
+  // Add the predict button next to the clear button with a width of 1 and a
+  // height of 1
   my_grid.attach_next_to(predict_button, clear_button, Gtk::POS_RIGHT, 1, 1);
 
   // Show everything on the window
   show_all_children();
 }
 
-Window::~Window()
-{
-}
+Window::~Window() {}
 
 // Calls the clear_screen method on the MouseDrawing area
-void Window::on_clear_clicked()
-{
-    // Clear screen
-    mouse_drawing.clear_screen();
-    std::cout << "Clear clicked!" << std::endl;
+void Window::on_clear_clicked() {
+  // Clear screen
+  mouse_drawing.clear_screen();
+  std::cout << "Clear clicked!" << std::endl;
 }
 
 // Calls the save_screen method on the MouseDrawing area
 // TODO add implementation of NN to detect the number that was drawn.
-void Window::on_predict_clicked()
-{
-    // Save screen to file
-    // TODO call NN on file and determine the digit
-    std::cout << "Predict clicked!" << std::endl;
-    mouse_drawing.save_screen();
+void Window::on_predict_clicked() {
+  // Save screen to file
+  // TODO call NN on file and determine the digit
+  std::cout << "Predict clicked!" << std::endl;
+  mouse_drawing.save_screen();
 }
