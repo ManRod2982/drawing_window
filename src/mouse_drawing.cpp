@@ -59,7 +59,7 @@ bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
       // Set black background
       cr->set_source_rgb(0.0, 0.0, 0.0);
       cr->paint();
-      this->state = DrawState::wait;
+      this->state = DrawState::draw;
       break;
 
     case DrawState::draw:
@@ -91,6 +91,7 @@ bool MouseDrawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 // coordinates on our points vector to be drawn later
 bool MouseDrawing::on_button_press_event(GdkEventButton* event) {
   if (event->button == 1) {  // Left mouse button
+    this->left_clicked = true;
     this->state = DrawState::draw;
     points.push_back({event->x, event->y});
     std::cout << event->x << " " << event->y << std::endl;
@@ -102,7 +103,7 @@ bool MouseDrawing::on_button_press_event(GdkEventButton* event) {
 // Checks when the click is released to stop drawing.
 bool MouseDrawing::on_button_release_event(GdkEventButton* event) {
   if (event->button == 1) {
-    this->state = DrawState::wait;
+    this->left_clicked = false;
     return true;  // Event handled
   }
   return false;
@@ -111,7 +112,7 @@ bool MouseDrawing::on_button_release_event(GdkEventButton* event) {
 // Logs new coordinates as we move with the button pressed down.
 // if movement is detected but the left button was released do nothing.
 bool MouseDrawing::on_motion_notify_event(GdkEventMotion* event) {
-  if (this->state == DrawState::draw) {
+  if (this->left_clicked) {
     points.push_back({event->x, event->y});
     queue_draw();  // Request a redraw
     std::cout << event->x << " " << event->y << std::endl;

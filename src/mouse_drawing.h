@@ -25,8 +25,7 @@ class MouseDrawing : public Gtk::DrawingArea {
   // State definitions to decide how to handle on_draw calls
   enum class DrawState {
     clear,  // Clears the screen
-    draw,   // Draws the points currently stored on the screen
-    wait
+    draw    // Draws the points currently stored on the screen
   };
 
  protected:
@@ -48,6 +47,8 @@ class MouseDrawing : public Gtk::DrawingArea {
   double brush_size = 10.0;
   // On the first call we clear the screen
   DrawState state = DrawState::clear;
+  // Used to signal when the left mouse button is pressed
+  bool left_clicked = false;
   // Used to store the cairo context between on_draw calls
   Cairo::RefPtr<Cairo::Surface> surface;
   // Used to store mouse activity data
