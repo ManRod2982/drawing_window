@@ -37,6 +37,47 @@ void MouseDrawing::clear_screen() {
 // Saves the current surface to a png file called "image"
 void MouseDrawing::save_screen() { this->surface->write_to_png("image.png"); }
 
+Eigen::VectorXd MouseDrawing::export_to_vector(int w, int h, double scale) {
+  // Create new Cairo surface for the scaled surface
+  Cairo::RefPtr<Cairo::ImageSurface> scaled_surface =
+      Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, w, h);
+  Cairo::RefPtr<Cairo::Context> scaled_context =
+      Cairo::Context::create(scaled_surface);
+
+  double scale_x = (double)w / drawing_area_w;
+  double scale_y = (double)h / drawing_area_h;
+  scaled_context->scale(scale_x, scale_y);
+
+  // 3. Draw the original surface onto the scaled context of the new surface
+  Cairo::RefPtr<Cairo::SurfacePattern> pattern =
+      Cairo::SurfacePattern::create(this->surface);
+  scaled_context->set_source(pattern);
+  scaled_context->paint();
+
+  // 4. Extract pixel data and convert to grayscale vector
+  uint8_t* data = scaled_surface->get_data();
+  int stride = scaled_surface->get_stride();
+  Eigen::VectorXd grayscale_pixels(w * h);
+
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      // Cairo typically uses CAIRO_FORMAT_ARGB32, which is BGRX in memory on
+      // little-endian systems
+      unsigned char* pixel = data + y * stride + x * 4;
+      unsigned char blue = pixel[0];
+      unsigned char green = pixel[1];
+      unsigned char red = pixel[2];
+
+      // Grayscale conversion using luminance formula (approx)
+      unsigned char gray = static_cast<unsigned char>(
+          0.2126 * red + 0.7152 * green + 0.0722 * blue);
+      grayscale_pixels[y * w + x] = gray / scale;
+    }
+  }
+
+  return grayscale_pixels;
+}
+
 // Main function where the drawing is handled
 // a state variable is used to decide when to draw and
 // when to clear the screen.

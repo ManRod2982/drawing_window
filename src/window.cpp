@@ -51,11 +51,18 @@ void Window::on_clear_clicked() {
   std::cout << "Clear clicked!" << std::endl;
 }
 
+// Helper function used to get the index of the
+// maximum value in a VectorXd
+int get_max_index(Eigen::VectorXd vec) {
+  auto max_iter = std::max_element(vec.begin(), vec.end());
+  return std::distance(vec.begin(), max_iter);
+}
+
 // Calls the save_screen method on the MouseDrawing area
-// TODO add implementation of NN to detect the number that was drawn.
 void Window::on_predict_clicked() {
   // Save screen to file
-  // TODO call NN on file and determine the digit
   std::cout << "Predict clicked!" << std::endl;
-  mouse_drawing.save_screen();
+  auto drawing = mouse_drawing.export_to_vector(28, 28, 255.0);
+  // auto result = nn.forward_propagation(drawing);
+  // std::cout << "You drew a: " get_max_index(result) << std::endl;
 }

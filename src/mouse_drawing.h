@@ -9,6 +9,7 @@
 
 #include <gtkmm/drawingarea.h>
 
+#include <eigen3/Eigen/Dense>
 #include <vector>
 
 // MouseDrawing Definition
@@ -21,6 +22,10 @@ class MouseDrawing : public Gtk::DrawingArea {
   void clear_screen(void);
   // Used to generate an image file from the current screen
   void save_screen(void);
+  // Exports screen to a grayscale vector
+  // takes the width and height to be scaled to
+  Eigen::VectorXd export_to_vector(int w, int h, double scale);
+
   virtual ~MouseDrawing();
   // State definitions to decide how to handle on_draw calls
   enum class DrawState {

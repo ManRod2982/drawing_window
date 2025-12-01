@@ -16,6 +16,9 @@ target_sources(window
 )
 target_link_libraries(window PRIVATE ${GTKMM_LIBRARIES})
 
+find_package(Eigen3 REQUIRED NO_MODULE) # Use Eigen3::Eigen target
+target_link_libraries(window PRIVATE Eigen3::Eigen)
+
 # Setup CMake to use GTK+, tell the compiler where to look for headers
 # and to the linker where to look for libraries
 target_include_directories(window
