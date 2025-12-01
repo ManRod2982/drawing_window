@@ -39,6 +39,9 @@ Window::Window(SimpleNN nn)
   // height of 1
   my_grid.attach_next_to(predict_button, clear_button, Gtk::POS_RIGHT, 1, 1);
 
+  my_grid.attach_next_to(text_view, clear_button, Gtk::POS_BOTTOM, 2, 1);
+  text_view.set_text("You drew: ");
+
   // Show everything on the window
   show_all_children();
 }
@@ -65,5 +68,8 @@ void Window::on_predict_clicked() {
   std::cout << "Predict clicked!" << std::endl;
   auto drawing = mouse_drawing.export_to_vector(28, 28, 255.0);
   auto result = nn.forward_propagation(drawing);
-  std::cout << "You drew a: " << get_max_index(result) << std::endl;
+  int number = get_max_index(result);
+  std::string display = "You drew a: " + std::to_string(number);
+  std::cout << display << std::endl;
+  text_view.set_text(display);
 }

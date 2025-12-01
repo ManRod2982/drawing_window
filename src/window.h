@@ -8,6 +8,7 @@
 
 #include <gtkmm/button.h>
 #include <gtkmm/grid.h>
+#include <gtkmm/label.h>
 #include <gtkmm/window.h>
 
 #include "mouse_drawing.h"
@@ -17,6 +18,7 @@
 // it contains a grid widget that houses
 // 2 buttons
 // 1 drawing area
+// 1 text area
 class Window : public Gtk::Window {
  public:
   Window(SimpleNN nn);
@@ -31,6 +33,7 @@ class Window : public Gtk::Window {
   Gtk::Grid my_grid;
   MouseDrawing mouse_drawing;
   Gtk::Button clear_button, predict_button;
+  Gtk::Label text_view;
 
  private:
   // Neural network used to detect the number drawn
