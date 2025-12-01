@@ -19,6 +19,13 @@ target_link_libraries(window PRIVATE ${GTKMM_LIBRARIES})
 find_package(Eigen3 REQUIRED NO_MODULE) # Use Eigen3::Eigen target
 target_link_libraries(window PRIVATE Eigen3::Eigen)
 
+# Pull in simple_nn by path (relative or absolute)
+add_subdirectory(../simple_nn build_simple_nn EXCLUDE_FROM_ALL)
+
+# link the library target created by simple_nn's CMake (example name used earlier: simple_nn_lib)
+target_link_libraries(window PRIVATE simple_nn_lib)
+target_include_directories(window PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../simple_nn/src)
+
 # Setup CMake to use GTK+, tell the compiler where to look for headers
 # and to the linker where to look for libraries
 target_include_directories(window
