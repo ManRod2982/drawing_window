@@ -15,7 +15,7 @@
 // Everything is enclosed in a Gtk::Grid widget
 Window::Window(SimpleNN nn)
     : nn(nn), clear_button("Clear"), predict_button("Predict") {
-  set_title("NMIST example");
+  set_title("MNIST example");
   set_border_width(10);
 
   // Adds grid to the window and sets the same width to all the columns
